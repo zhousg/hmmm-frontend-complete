@@ -5,11 +5,23 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "fix": "vue-cli-service lint format"
   },
   "dependencies": {
+    "axios": "^0.19.2",
     "core-js": "^3.6.4",
+    "echarts": "^4.6.0",
+    "element-ui": "^2.13.0",
+    "font-awesome": "^4.7.0",
+    "js-cookie": "^2.2.1",
+    "mockjs": "^1.1.0",
+    "normalize.css": "^8.0.1",
+    "nprogress": "^0.2.0",
+    "screenfull": "^5.0.2",
     "vue": "^2.6.11",
+    "vue-i18n": "^8.15.3",
+    "vue-quill-editor": "^3.0.6",
     "vue-router": "^3.1.5",
     "vuex": "^3.1.2"
   },
@@ -30,15 +42,7 @@
     "lint-staged": "^9.5.0",
     "sass": "^1.25.0",
     "sass-loader": "^8.0.2",
+    "svg-sprite-loader": "^4.2.1",
     "vue-template-compiler": "^2.6.11"
-  },
-  "gitHooks": {
-    "pre-commit": "lint-staged"
-  },
-  "lint-staged": {
-    "*.{js,jsx,vue}": [
-      "vue-cli-service lint",
-      "git add"
-    ]
   }
 }
