@@ -212,7 +212,6 @@ import { status } from '@/api/hmmm/constants'
 import { list, remove, detail, disabled } from '@/api/hmmm/companys'
 import { provinces, citys } from '@/api/hmmm/citys.js'
 import Dialog from './../components/companys-add'
-var _this = null
 export default {
   name: 'CompanysList',
   components: {
