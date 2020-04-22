@@ -210,8 +210,8 @@ import AreaChart from './../components/dashboardAreaChart'
 
 const lineChartData = {
   newVisitis: {
-    expectedData: [100, 120, 161, 134, 105, 160, 165],
-    actualData: [120, 82, 91, 154, 162, 140, 145]
+    expectedData: [100, 120, 161, 134, 105, 160, 165, 100, 120, 161, 134, 105, 160, 165],
+    actualData: [120, 82, 91, 154, 162, 140, 15, 120, 82, 91, 154, 162, 140, 145]
   },
   messages: {
     expectedData: [200, 192, 120, 144, 160, 130, 140],
@@ -326,9 +326,10 @@ export default {
   }
   // 总销售额
   .total {
-    font-size: 30px;
+    font-size: 40px;
     height: 140px;
-    line-height: 100px;
+    line-height: 140px;
+    padding-left: 20px;
   }
   .trends {
     height: 22px;

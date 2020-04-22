@@ -53,19 +53,14 @@ export default {
           trigger: 'item',
           formatter: '{a} <br/>{b} : {c} ({d}%)'
         },
-        legend: {
-          left: 'center',
-          bottom: '10',
-          data: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts']
-        },
         calculable: true,
         series: [
           {
             name: 'WEEKLY WRITE ARTICLES',
             type: 'pie',
             roseType: 'radius',
-            radius: [15, 95],
-            center: ['50%', '38%'],
+            radius: [15, 50],
+            center: ['50%', '50%'],
             data: [
               { value: 320, name: 'Industries' },
               { value: 240, name: 'Technology' },

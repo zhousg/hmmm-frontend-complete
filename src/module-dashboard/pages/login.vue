@@ -54,16 +54,6 @@
         :loading="loading"
         @click.native.prevent="handleLogin"
       >{{$t('login.logIn')}}</el-button>
-
-      <div class="tips">
-        <span>{{$t('login.username')}} : root@admin.com</span>
-        <span>{{$t('login.password')}} : 123456</span>
-      </div>
-      <div class="tips">
-        <span style="margin-right:18px;">{{$t('login.username')}} : editor@admin.com</span>
-        <span>{{$t('login.password')}} : 123456</span>
-      </div>
-
     </el-form>
     </div>
   </div>
@@ -72,11 +62,10 @@
 <script>
 import { validateEmail } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect'
-import loginSocialSignin from './../components/loginSocialSignin'
 import shajs from 'sha.js'
 
 export default {
-  components: { LangSelect, loginSocialSignin },
+  components: { LangSelect },
   name: 'login',
   data () {
     const validateUsername = (rule, value, callback) => {
@@ -275,15 +264,15 @@ $light_gray: #333;
   padding-bottom:15px;
 }
 .logoInfo span{
-	font-size: 22px;
-	padding: 0 10px;
-	float: left;
+  font-size: 22px;
+  padding: 0 10px;
+  float: left;
 }
 .logoInfo .logo{
-	background: url(../assets/loginLogo.png) no-repeat;
-	display:inline-block;
-	width: 35px;
-	height: 26px;
-	float: left;
+  background: url(../assets/loginLogo.png) no-repeat;
+  display:inline-block;
+  width: 35px;
+  height: 26px;
+  float: left;
 }
 </style>

@@ -1,20 +1,23 @@
 <template>
-	<div class="app-wrapper" :class="{hideSidebar:!sidebar.opened}">
+  <div class="app-wrapper" :class="{hideSidebar:!sidebar.opened}">
     <layout-navbar></layout-navbar>
-		<layout-sidebar class="sidebar-container"></layout-sidebar>
-		<div class="main-container">
-			<layout-tags></layout-tags>
-			<layout-app-main></layout-app-main>
+    <layout-sidebar class="sidebar-container"></layout-sidebar>
+    <div class="main-container">
+      <layout-tags></layout-tags>
+      <layout-app-main></layout-app-main>
       <div class="bottom">
         <p>
           <a href="#" target="_blank">
             <svg-icon icon-class="github"></svg-icon>
           </a>
         </p>
-        <p>Copyright<svg-icon icon-class="copyright"></svg-icon> 2019 </p>
+        <p>
+          Copyright
+          <svg-icon icon-class="copyright"></svg-icon>2019
+        </p>
       </div>
-		</div>
-	</div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -42,17 +45,17 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped>
 @import "src/styles/mixin.scss";
 .app-wrapper {
-	@include clearfix;
-	position: relative;
-	height: 100%;
-	width: 100%;
+  @include clearfix;
+  position: relative;
+  height: 100%;
+  width: 100%;
 }
 .bottom {
   height: 150px;
   padding-top: 60px;
   p {
     text-align: center;
-    color: rgba(0,0,0,.45);
+    color: rgba(0, 0, 0, 0.45);
     font-size: 14px;
   }
 }

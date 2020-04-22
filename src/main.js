@@ -18,9 +18,6 @@ import 'font-awesome/css/font-awesome.css'
  */
 import dashboard from '@/module-dashboard/' // 面板
 import base from '@/module-manage/' // 用户管理
-// import list from '@/module-list/' // 列表页
-// import form from '@/module-form/' // 表单页
-// import details from '@/module-details/' // 表单页
 import hmmm from '@/module-hmmm/' // 黑马面面
 
 Vue.use(dashboard, store)

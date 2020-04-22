@@ -80,11 +80,6 @@ export default {
             { name: 'Marketing', max: 20000 }
           ]
         },
-        legend: {
-          left: 'center',
-          bottom: '10',
-          data: ['Allocated Budget', 'Expected Spending', 'Actual Spending']
-        },
         series: [{
           type: 'radar',
           symbolSize: 0,
