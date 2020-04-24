@@ -132,8 +132,8 @@
           </el-col>
           <el-col :span="6">
             <el-form-item style="text-align:right">
-              <el-button>清除</el-button>
-              <el-button type="primary">搜索</el-button>
+              <el-button @click="clear()">清除</el-button>
+              <el-button @onclick="filter()" type="primary">搜索</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -179,7 +179,7 @@
         :page-size="requestParams.pagesize"
         :current-page="requestParams.page"
         @current-change="pager"
-        :page-sizes="[1,2,3,4]"
+        :page-sizes="[5,10,20,50]"
         @size-change="handleSizeChange"
       ></el-pagination>
     </el-card>
@@ -223,7 +223,7 @@ export default {
         creatorID: null,
         catalogID: null,
         page: 1,
-        pagesize: 2
+        pagesize: 5
       },
       // 学科选项
       subjectOptions: [],
@@ -268,6 +268,15 @@ export default {
       this.$nextTick(() => {
         this.$refs.questionPreview.open()
       })
+    },
+    clear () {
+      for (const key in this.requestParams) {
+        if (key !== 'page' || key !== 'pagesize') this.requestParams[key] = null
+      }
+    },
+    filter () {
+      this.requestParams.page = 1
+      this.getList()
     },
     async getList () {
       const { data: questionsData } = await questionList(this.requestParams)

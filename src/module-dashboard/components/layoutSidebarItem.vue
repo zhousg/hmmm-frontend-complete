@@ -17,21 +17,16 @@
           >{{item.children[0].meta.title}}</span>
         </el-menu-item>
       </router-link>
-
       <el-submenu v-else :index="item.name||item.path" :key="item.name">
         <template slot="title">
           <svg-icon v-if="item.meta&&item.meta.icon" :icon-class="item.meta.icon"></svg-icon>
           <span v-if="item.meta&&item.meta.title">{{item.meta.title}}</span>
         </template>
-
         <template v-for="child in item.children" v-if="!child.hidden">
-          <!-- <sidebar-item :is-nest="true" v-if="child.children && child.children.length > 0" :routes="[child]" :key="child.path"></sidebar-item> -->
-
           <router-link :to="item.path+'/'+child.path" :key="child.name">
             <el-menu-item :index="item.path+'/'+child.path">
               <svg-icon v-if="child.meta&&child.meta.icon" :icon-class="child.meta.icon"></svg-icon>
               <span v-if="child.meta&&child.meta.title">{{child.meta.title}}</span>
-              <!-- <span v-if="child.meta&&child.meta.title">{{generateTitle(child.meta.title)}}</span> -->
             </el-menu-item>
           </router-link>
         </template>
