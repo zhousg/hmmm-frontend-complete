@@ -133,22 +133,35 @@
           <el-col :span="6">
             <el-form-item style="text-align:right">
               <el-button @click="clear()">清除</el-button>
-              <el-button @onclick="filter()" type="primary">搜索</el-button>
+              <el-button @click="filter()" type="primary">搜索</el-button>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
+      <!-- 数据记录 -->
+      <el-alert
+        :title="`数据一共 ${total} 条`"
+        style="margin-bottom:15px"
+        type="info"
+        class="alert"
+        :closable="false"
+        show-icon
+      ></el-alert>
       <!-- 列表 -->
       <el-table :data="questions">
-        <el-table-column label="序号" type="index"></el-table-column>
-        <el-table-column label="试题编号" prop="number"></el-table-column>
+        <el-table-column label="试题编号" prop="number" width="120px"></el-table-column>
         <el-table-column label="学科" prop="subject"></el-table-column>
+        <el-table-column label="目录" prop="catalog"></el-table-column>
         <el-table-column label="题型">
           <template slot-scope="scope">
             {{questionType.find(item=>item.value===+scope.row.questionType).label}}
           </template>
         </el-table-column>
-        <el-table-column label="题干" prop="question"></el-table-column>
+        <el-table-column label="题干" width="280px">
+          <template slot-scope="scope">
+            <div v-html="scope.row.question"></div>
+          </template>
+        </el-table-column>
         <el-table-column label="录入时间" width="180">
           <template slot-scope="scope">
             {{scope.row.addDate|parseTimeByString}}
@@ -159,14 +172,13 @@
             {{difficulty.find(item=>item.value===+scope.row.difficulty).label}}
           </template>
         </el-table-column>
-        <el-table-column label="使用次数" prop="id"></el-table-column>
         <el-table-column label="录入人" prop="creator"></el-table-column>
-        <el-table-column label="操作" width="200px">
+        <el-table-column label="操作" width="180px">
           <template slot-scope="scope">
-            <el-button type="text" @click="openPreviewDialog(scope.row)">预览</el-button>
-            <el-button type="text">修改</el-button>
-            <el-button type="text">删除</el-button>
-            <el-button type="text">加入精选</el-button>
+            <el-button plain type="primary" size="small" circle icon="el-icon-view" title="预览" @click="openPreviewDialog(scope.row)"></el-button>
+            <el-button plain type="success" size="small" circle icon="el-icon-edit" title="修改" @click="$router.push('new')"></el-button>
+            <el-button plain type="danger" size="small" circle icon="el-icon-delete" title="删除" @click="delQuestion(scope.row)"></el-button>
+            <el-button plain type="warning" size="small" circle icon="el-icon-check" @click="addChoice(scope.row)" title="加入精选"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -195,7 +207,7 @@ import { simple as userList } from '@/api/base/users'
 import { difficulty, questionType, direction } from '@/api/hmmm/constants'
 import { simple as tagList } from '@/api/hmmm/tags'
 import { provinces as getCity, citys as getArea } from '@/api/hmmm/citys'
-import { list as questionList } from '@/api/hmmm/questions'
+import { list as questionList, remove as questionDel, choiceAdd } from '@/api/hmmm/questions'
 import QuestionsPreview from '../components/questions-preview'
 export default {
   components: {
@@ -269,9 +281,29 @@ export default {
         this.$refs.questionPreview.open()
       })
     },
+    async delQuestion (question) {
+      await this.$confirm('此操作将永久删除该题目, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+      await questionDel(question)
+      this.$message.success('删除成功')
+      this.getList()
+    },
+    async addChoice (question) {
+      await this.$confirm('此操作将该题目加入精选, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'info'
+      })
+      await choiceAdd({ id: question.id, choiceState: 1 })
+      this.$message.success('加入精选成功')
+      this.getList()
+    },
     clear () {
       for (const key in this.requestParams) {
-        if (key !== 'page' || key !== 'pagesize') this.requestParams[key] = null
+        if (key !== 'page' && key !== 'pagesize') this.requestParams[key] = null
       }
     },
     filter () {

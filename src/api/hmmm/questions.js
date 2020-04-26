@@ -27,12 +27,16 @@ export const update = data => createAPI(`/questions/${data.id}`, 'put', data)
 // 基础题库删除
 export const remove = data => createAPI(`/questions/${data.id}`, 'delete', data)
 
+// 精选题库加入取消
+export const choiceAdd = data =>
+  createAPI(`/questions/choice/${data.id}/${data.choiceState}`, 'patch', data)
+
 // 精选题库列表
 export const choice = data => createAPI('/questions/choice', 'get', data)
 
 // 精选题库上下架
 export const choicePublish = data =>
-  createAPI(`/questions/choice/${data.id}/publish`, 'post', data)
+  createAPI(`/questions/choice/${data.id}/${data.publishState}`, 'post', data)
 
 // 试题审核
 export const choiceCheck = data =>

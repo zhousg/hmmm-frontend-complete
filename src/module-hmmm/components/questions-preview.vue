@@ -6,22 +6,22 @@
         <el-col :span="6">【编号】：{{myData.id}}</el-col>
         <el-col :span="6">【难度】：{{myData.difficulty|nd}}</el-col>
         <el-col :span="6">【标签】：{{myData.tags}}</el-col>
-        <el-col :span="6">【学科】：{{myData.subject}}</el-col>
-        <el-col :span="6">【目录】：{{myData.catalog}}</el-col>
+        <el-col :span="6">【学科】：{{myData.subjectName}}</el-col>
+        <el-col :span="6">【目录】：{{myData.directoryName}}</el-col>
         <el-col :span="6">【方向】：{{myData.direction}}</el-col>
       </el-row>
       <hr>
       【题干】：<div v-html="myData.question" style="color:blue"></div>
-      <div>
-        {{myData.questionType|tx}}选项：（以下选中的选项为正确答案）
-        <div v-for="item in myData.options" :key="item.code" style="padding:5px 0">
+      <div v-if="myData.questionType!=='3'">
+        <div style="padding-bottom:5px">{{myData.questionType|tx}} 选项：（以下选中的选项为正确答案）</div>
+        <div v-for="item in myData.options" :key="item.code" style="padding:8px 0">
           <el-radio :value="item.isRight" :label="1">{{item.title}}</el-radio>
         </div>
       </div>
       <hr>
-      【参考答案】：<el-button type="danger">视频答案预览</el-button>
+      【参考答案】：<el-button type="danger" size="small">视频答案预览</el-button>
       <hr>
-      【答案解析】：{{myData.answer}}
+      【答案解析】：<div style="display:inline-block" v-html="myData.answer"></div>
       <hr>
       【题目备注】：{{myData.remarks}}
       <div slot="footer">

@@ -31,8 +31,6 @@
           ></el-autocomplete>
         </transition>
       </div>
-      <!-- 错误 -->
-      <error-log class="error item"></error-log>
       <!-- 全屏 -->
       <el-tooltip effect="dark" :content="$t('navbar.screenfull')" placement="bottom">
         <screenfull class="item"></screenfull>
@@ -67,9 +65,7 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
-import LangSelect from '@/components/LangSelect'
 import ThemePicker from '@/components/ThemePicker'
 import { search } from '@/api/base/menus'
 
@@ -78,9 +74,7 @@ export default {
   components: {
     Breadcrumb,
     Hamburger,
-    ErrorLog,
     Screenfull,
-    LangSelect,
     ThemePicker
   },
   computed: {

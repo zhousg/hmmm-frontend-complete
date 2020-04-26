@@ -71,7 +71,7 @@
             </el-upload>
           </div>
           <!-- 添加按钮 -->
-          <el-button type="danger" @click="addOption" size="small">+增加选项与答案</el-button>
+          <el-button type="danger" :disabled="qsForm.questionType!=='2'" @click="addOption" size="small">+增加选项与答案</el-button>
         </el-form-item>
         <!-- 解析视频 输入框-->
         <el-form-item label="解析视频：">
@@ -302,6 +302,9 @@ export default {
 </script>
 
 <style scoped lang='scss'>
+.el-card{
+  padding-top: 20px;
+}
 // 现在仅在当前组件下生效，让样式的作用更深
 .question-new ::v-deep .ql-editor{
   height: 200px;
