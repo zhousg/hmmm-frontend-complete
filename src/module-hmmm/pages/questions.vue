@@ -3,8 +3,8 @@
     <el-card>
       <!-- 按钮 -->
       <div class="btn_wrapper">
-        <el-button @click="$router.push('new')" type="primary" size="small">新增试题</el-button>
-        <el-button type="success" size="small">批量导入</el-button>
+        <el-button icon="el-icon-edit" @click="$router.push('new')" type="primary" size="small">新增试题</el-button>
+        <el-button icon="el-icon-upload2" type="success" size="small">批量导入</el-button>
       </div>
       <!-- 筛选 -->
       <el-form label-width="80px" size="small">
