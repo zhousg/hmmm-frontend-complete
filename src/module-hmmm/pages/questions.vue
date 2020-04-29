@@ -11,7 +11,7 @@
         <el-row>
           <el-col :span="6">
             <el-form-item label="学科">
-              <el-select v-model="requestParams.subjectID" style="width:100%">
+              <el-select @change="changeSubject" v-model="requestParams.subjectID" style="width:100%">
                 <el-option
                   v-for="item in subjectOptions"
                   :key="item.value"
@@ -22,22 +22,10 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="难度">
-              <el-select v-model="requestParams.difficulty" style="width:100%">
+            <el-form-item label="二级目录">
+              <el-select v-model="requestParams.catalogID" style="width:100%">
                 <el-option
-                  v-for="item in diffOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="试题类型">
-              <el-select v-model="requestParams.questionType" style="width:100%">
-                <el-option
-                  v-for="item in questionTypeOptions"
+                  v-for="item in directoryOptions"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
@@ -58,40 +46,32 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="城市">
-              <!-- 城市 -->
-              <el-select @change="handleCity" v-model="requestParams.province" style="width:48%;margin-right:2%">
-                <el-option
-                  v-for="item in cityOptions"
-                  :key="item"
-                  :label="item"
-                  :value="item"
-                ></el-option>
-              </el-select>
-              <!-- 地区 -->
-              <el-select v-model="requestParams.city" style="width:50%">
-                <el-option
-                  v-for="item in areaOptions"
-                  :key="item"
-                  :label="item"
-                  :value="item"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
             <el-form-item label="关键字">
               <el-input v-model="requestParams.keyword"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="题目备注">
-              <el-input v-model="requestParams.remarks"></el-input>
+            <el-form-item label="试题类型">
+              <el-select v-model="requestParams.questionType" style="width:100%">
+                <el-option
+                  v-for="item in questionTypeOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="企业简称">
-              <el-input v-model="requestParams.shortName"></el-input>
+            <el-form-item label="难度">
+              <el-select v-model="requestParams.difficulty" style="width:100%">
+                <el-option
+                  v-for="item in diffOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -119,13 +99,33 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="二级目录">
-              <el-select v-model="requestParams.catalogID" style="width:100%">
+            <el-form-item label="题目备注">
+              <el-input v-model="requestParams.remarks"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="企业简称">
+              <el-input v-model="requestParams.shortName"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="城市">
+              <!-- 城市 -->
+              <el-select @change="handleCity" v-model="requestParams.province" style="width:48%;margin-right:2%">
                 <el-option
-                  v-for="item in directoryOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  v-for="item in cityOptions"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                ></el-option>
+              </el-select>
+              <!-- 地区 -->
+              <el-select v-model="requestParams.city" style="width:50%">
+                <el-option
+                  v-for="item in areaOptions"
+                  :key="item"
+                  :label="item"
+                  :value="item"
                 ></el-option>
               </el-select>
             </el-form-item>
@@ -240,7 +240,7 @@ export default {
       // 学科选项
       subjectOptions: [],
       // 难度选项
-      diffOptions: [],
+      diffOptions: difficulty,
       // 试题类型选项
       questionTypeOptions: questionType,
       // 标签选项
@@ -261,20 +261,28 @@ export default {
     // 学科下拉选项
     const { data: subjectArr } = await subjectList()
     this.subjectOptions = subjectArr
-    // 难度下拉选项
-    this.diffOptions = difficulty
-    // 标签下拉选项
-    const { data: tagArr } = await tagList()
-    this.tagOptions = tagArr
     // 用户
     const { data: userArr } = await userList()
     this.userOptions = userArr
-    // 获取目录
-    const { data: directoryArr } = await directoryList()
-    this.directoryOptions = directoryArr
     this.getList()
   },
   methods: {
+    // 选择学科查询目录和标签的下拉选项数据
+    async changeSubject (subjectID) {
+      this.requestParams.catalogID = null
+      this.requestParams.tags = null
+      if (subjectID) {
+        // 获取目录
+        const { data: directoryArr } = await directoryList({ subjectID })
+        this.directoryOptions = directoryArr
+        // 标签下拉选项
+        const { data: tagArr } = await tagList({ subjectID })
+        this.tagOptions = tagArr
+      } else {
+        this.directoryOptions = []
+        this.tagOptions = []
+      }
+    },
     openPreviewDialog (questionInfo) {
       this.questionInfo = questionInfo
       this.$nextTick(() => {
