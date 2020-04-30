@@ -138,6 +138,13 @@
           </el-col>
         </el-row>
       </el-form>
+      <!-- tab切换 -->
+      <el-tabs v-model="requestParams.chkState" type="card" @tab-click="changeTab">
+        <el-tab-pane label="全部" name="all"></el-tab-pane>
+        <el-tab-pane label="待审核" name="0"></el-tab-pane>
+        <el-tab-pane label="已审核" name="1"></el-tab-pane>
+        <el-tab-pane label="已拒绝" name="2"></el-tab-pane>
+      </el-tabs>
       <!-- 数据记录 -->
       <el-alert
         :title="`数据一共 ${total} 条`"
@@ -148,7 +155,7 @@
         show-icon
       ></el-alert>
       <!-- 列表 -->
-      <el-table :data="questions">
+      <el-table :data="questions" class="my-table">
         <el-table-column label="试题编号" prop="number" width="120px"></el-table-column>
         <el-table-column label="学科" prop="subject" width="120px"></el-table-column>
         <el-table-column label="目录" prop="catalog" width="120px"></el-table-column>
@@ -172,17 +179,27 @@
             {{difficulty.find(item=>item.value===+scope.row.difficulty).label}}
           </template>
         </el-table-column>
-        <el-table-column label="录入人" prop="creator" width="150px"></el-table-column>
-        <el-table-column label="审核状态" prop="chkState" width="150px"></el-table-column>
-        <el-table-column label="审核意见" prop="chkRemarks" width="150px"></el-table-column>
-        <el-table-column label="审核人" prop="chkUser" width="150px"></el-table-column>
-        <el-table-column label="发布状态" prop="publishState" width="150px"></el-table-column>
-        <el-table-column label="操作" width="180px" fixed="right">
+        <el-table-column label="录入人" prop="creator" width="120px"></el-table-column>
+        <el-table-column label="审核状态" width="120px">
           <template slot-scope="scope">
-            <el-button plain type="primary" size="small" circle icon="el-icon-view" title="预览" @click="openPreviewDialog(scope.row)"></el-button>
-            <el-button plain type="success" size="small" circle icon="el-icon-edit" title="修改" @click="$router.push('new')"></el-button>
-            <el-button plain type="danger" size="small" circle icon="el-icon-delete" title="删除" @click="delQuestion(scope.row)"></el-button>
-            <el-button plain type="warning" size="small" circle icon="el-icon-close" @click="delChoice(scope.row)" title="移出精选"></el-button>
+            {{scope.row.chkState|state_chk}}
+          </template>
+        </el-table-column>
+        <el-table-column label="审核意见" prop="chkRemarks" width="150px"></el-table-column>
+        <el-table-column label="审核人" prop="chkUser" width="120px"></el-table-column>
+        <el-table-column label="发布状态" width="150px">
+          <template slot-scope="scope">
+            {{scope.row|state_pub}}
+           </template>
+        </el-table-column>
+        <el-table-column label="操作" width="200px" fixed="right" align="center">
+          <template slot-scope="scope">
+            <el-button class="fs" type="text" @click="openPreviewDialog(scope.row)">预览</el-button>
+            <el-button class="fs" type="text" @click="openCheckDialog(scope.row)" :disabled="scope.row.chkState!==0">审核</el-button>
+            <el-button class="fs" type="text" :disabled="scope.row.publishState===1" @click="$router.push('new')">修改</el-button>
+            <el-button class="fs" type="text" @click="togglePublish(scope.row)">{{scope.row.publishState===1?'下架':'上架'}}</el-button>
+            <el-button class="fs" type="text" :disabled="scope.row.publishState===1" @click="delQuestion(scope.row)">删除</el-button>
+            <!-- <el-button class="fs" type="text" @click="delChoice(scope.row)">移出精选</el-button> -->
           </template>
         </el-table-column>
       </el-table>
@@ -201,6 +218,8 @@
     </el-card>
     <!-- 预览 -->
     <questions-preview ref="questionPreview" :data="questionInfo"></questions-preview>
+    <!-- 审核 -->
+    <questions-check ref="questionCheck" :data="questionInfo" @updateList="getList()"></questions-check>
   </div>
 </template>
 
@@ -211,11 +230,29 @@ import { simple as userList } from '@/api/base/users'
 import { difficulty, questionType, direction } from '@/api/hmmm/constants'
 import { simple as tagList } from '@/api/hmmm/tags'
 import { provinces as getCity, citys as getArea } from '@/api/hmmm/citys'
-import { choice as questionList, remove as questionDel, choiceAdd } from '@/api/hmmm/questions'
+import { choice as questionList, remove as questionDel, choicePublish } from '@/api/hmmm/questions'
 import QuestionsPreview from '../components/questions-preview'
+import QuestionsCheck from '../components/questions-check'
 export default {
   components: {
-    QuestionsPreview
+    QuestionsPreview,
+    QuestionsCheck
+  },
+  filters: {
+    state_chk (val) {
+      if (val === 0) return '待审核'
+      if (val === 1) return '已审核'
+      if (val === 2) return '已拒绝'
+    },
+    state_pub (row) {
+      if (row.publishState === 1 && row.chkState === 1) {
+        return '已发布'
+      }
+      if (row.publishState === 0 && row.chkState === 1) {
+        return '已下架'
+      }
+      return '待发布'
+    }
   },
   data () {
     return {
@@ -239,7 +276,8 @@ export default {
         creatorID: null,
         catalogID: null,
         page: 1,
-        pagesize: 5
+        pagesize: 5,
+        chkState: 'all'
       },
       // 学科选项
       subjectOptions: [],
@@ -271,6 +309,30 @@ export default {
     this.getList()
   },
   methods: {
+    // 切换tab
+    changeTab () {
+      this.requestParams.page = 1
+      this.getList()
+    },
+    // 下架 或 下架
+    async togglePublish (question) {
+      await this.$confirm(`您确认${question.publishState === 1 ? '下架' : '上架'}这道题目吗?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+      question.publishState = question.publishState === 1 ? 0 : 1
+      await choicePublish(question)
+      this.$message.success(`${question.publishState === 1 ? '下架' : '上架'}成功`)
+      this.getList()
+    },
+    // 审核
+    openCheckDialog (questionInfo) {
+      this.questionInfo = questionInfo
+      this.$nextTick(() => {
+        this.$refs.questionCheck.open()
+      })
+    },
     // 选择学科查询目录和标签的下拉选项数据
     async changeSubject (subjectID) {
       this.requestParams.catalogID = null
@@ -303,16 +365,16 @@ export default {
       this.$message.success('删除成功')
       this.getList()
     },
-    async delChoice (question) {
-      await this.$confirm('此操作将该题目移出精选, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'info'
-      })
-      await choiceAdd({ id: question.id, choiceState: 0 })
-      this.$message.success('加入精选成功')
-      this.getList()
-    },
+    // async delChoice (question) {
+    //   await this.$confirm('此操作将该题目移出精选, 是否继续?', '提示', {
+    //     confirmButtonText: '确定',
+    //     cancelButtonText: '取消',
+    //     type: 'info'
+    //   })
+    //   await choiceAdd({ id: question.id, choiceState: 0 })
+    //   this.$message.success('加入精选成功')
+    //   this.getList()
+    // },
     clear () {
       for (const key in this.requestParams) {
         if (key !== 'page' && key !== 'pagesize') this.requestParams[key] = null
@@ -323,7 +385,9 @@ export default {
       this.getList()
     },
     async getList () {
-      const { data: questionsData } = await questionList(this.requestParams)
+      const params = { ...this.requestParams }
+      if (params.chkState === 'all') params.chkState = null
+      const { data: questionsData } = await questionList(params)
       this.questions = questionsData.items
       this.total = questionsData.counts
     },
@@ -346,12 +410,15 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .question-container {
   padding: 0 10px;
   margin: 10px 0;
 }
 .btn_wrapper {
   margin-bottom: 15px;
+}
+.fs{
+  font-size: 12px;
 }
 </style>

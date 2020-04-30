@@ -40,7 +40,7 @@ export const choicePublish = data =>
 
 // 试题审核
 export const choiceCheck = data =>
-  createAPI(`/questions/choice/${data.id}/check`, 'post', data)
+  createAPI(`/questions/check/${data.id}`, 'post', data)
 
 // 试题审核意见列表
 export const auditOpinions = data =>
