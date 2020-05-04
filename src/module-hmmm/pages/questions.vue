@@ -3,8 +3,7 @@
     <el-card>
       <!-- 按钮 -->
       <div class="btn_wrapper">
-        <el-button icon="el-icon-edit" @click="$router.push('new')" type="primary" size="small">新增试题</el-button>
-        <el-button icon="el-icon-upload2" type="success" size="small">批量导入</el-button>
+        <el-button icon="el-icon-edit" @click="$router.push('new')" type="success" size="small">新增试题</el-button>
       </div>
       <!-- 筛选 -->
       <el-form label-width="80px" size="small">
@@ -176,7 +175,7 @@
         <el-table-column label="操作" width="180px">
           <template slot-scope="scope">
             <el-button plain type="primary" size="small" circle icon="el-icon-view" title="预览" @click="openPreviewDialog(scope.row)"></el-button>
-            <el-button plain type="success" size="small" circle icon="el-icon-edit" title="修改" @click="$router.push('new')"></el-button>
+            <el-button plain type="success" size="small" circle icon="el-icon-edit" title="修改" @click="$router.push(`new?id=${scope.row.id}`)"></el-button>
             <el-button plain type="danger" size="small" circle icon="el-icon-delete" title="删除" @click="delQuestion(scope.row)"></el-button>
             <el-button plain type="warning" size="small" circle icon="el-icon-check" @click="addChoice(scope.row)" title="加入精选"></el-button>
           </template>

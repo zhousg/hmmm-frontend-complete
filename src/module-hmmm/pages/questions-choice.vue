@@ -3,8 +3,7 @@
     <el-card>
       <!-- 按钮 -->
       <div class="btn_wrapper">
-        <el-button icon="el-icon-edit" @click="$router.push('new')" type="primary" size="small">新增试题</el-button>
-        <el-button icon="el-icon-upload2" type="success" size="small">批量导入</el-button>
+        <el-button icon="el-icon-edit" @click="$router.push('new')" type="success" size="small">新增试题</el-button>
       </div>
       <!-- 筛选 -->
       <el-form label-width="80px" size="small">
@@ -196,7 +195,7 @@
           <template slot-scope="scope">
             <el-button class="fs" type="text" @click="openPreviewDialog(scope.row)">预览</el-button>
             <el-button class="fs" type="text" @click="openCheckDialog(scope.row)" :disabled="scope.row.chkState!==0">审核</el-button>
-            <el-button class="fs" type="text" :disabled="scope.row.publishState===1" @click="$router.push('new')">修改</el-button>
+            <el-button class="fs" type="text" :disabled="scope.row.publishState===1" @click="$router.push(`new?id=${scope.row.id}`)">修改</el-button>
             <el-button class="fs" type="text" @click="togglePublish(scope.row)">{{scope.row.publishState===1?'下架':'上架'}}</el-button>
             <el-button class="fs" type="text" :disabled="scope.row.publishState===1" @click="delQuestion(scope.row)">删除</el-button>
             <!-- <el-button class="fs" type="text" @click="delChoice(scope.row)">移出精选</el-button> -->
