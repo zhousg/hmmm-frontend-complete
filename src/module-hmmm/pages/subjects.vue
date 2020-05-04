@@ -18,7 +18,6 @@
           <el-button icon="el-icon-edit" @click="openDialog()" type="success" size="small">新增学科</el-button>
         </el-col>
       </el-row>
-
       <!-- 数据记录 -->
       <el-alert
         :title="`数据一共 ${total} 条`"
@@ -44,8 +43,8 @@
         <el-table-column label="题目数量" prop="totals"></el-table-column>
         <el-table-column label="操作" width="240px">
           <template slot-scope="scope">
-            <el-button type="text" @click="$router.push(`directorys?id=${scope.row.id}`)">学科分类</el-button>
-            <el-button type="text" @click="$router.push(`tags?id=${scope.row.id}`)">学科标签</el-button>
+            <el-button type="text" @click="$router.push(`directorys?id=${scope.row.id}&name=${encodeURIComponent(scope.row.subjectName)}`)">学科分类</el-button>
+            <el-button type="text" @click="$router.push(`tags?id=${scope.row.id}&name=${encodeURIComponent(scope.row.subjectName)}`)">学科标签</el-button>
             <el-button type="text" @click="openDialog(scope.row)">修改</el-button>
             <el-button type="text" @click="delSubject(scope.row)">删除</el-button>
           </template>

@@ -55,7 +55,8 @@ export default {
     open () {
       this.show = true
       if (this.data.id) {
-        this.formModel = this.data
+        const { id, subjectName, isFrontDisplay } = this.data
+        this.formModel = { id, subjectName, isFrontDisplay }
       } else {
         this.formModel = {
           id: null,
@@ -64,7 +65,9 @@ export default {
         }
       }
       // 清除校验效果
-      this.$refs.form.resetFields()
+      this.$nextTick(() => {
+        this.$refs.form.clearValidate()
+      })
     },
     async confirm () {
       this.$refs.form.validate(async valid => {

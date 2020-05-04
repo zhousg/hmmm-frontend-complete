@@ -29,4 +29,4 @@ export const remove = data =>
   createAPI(`/directorys/${data.id}`, 'delete', data)
 
 // 目录状态
-export const removeState = data => createAPI(`/directorys/${data.id}/${data.state}`, 'post', data)
+export const changeState = data => createAPI(`/directorys/${data.id}/${data.state}`, 'post', data)
