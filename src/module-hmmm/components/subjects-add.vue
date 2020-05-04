@@ -54,6 +54,17 @@ export default {
   methods: {
     open () {
       this.show = true
+      if (this.data.id) {
+        this.formModel = this.data
+      } else {
+        this.formModel = {
+          id: null,
+          subjectName: null,
+          isFrontDisplay: '1'
+        }
+      }
+      // 清除校验效果
+      this.$refs.form.resetFields()
     },
     async confirm () {
       this.$refs.form.validate(async valid => {

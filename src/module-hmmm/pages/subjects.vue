@@ -1,26 +1,24 @@
 <template>
   <div class="question-container">
     <el-card>
-      <!-- 按钮 -->
-      <div class="btn_wrapper">
-        <el-button icon="el-icon-edit" @click="openDialog()" type="success" size="small">新增学科</el-button>
-      </div>
       <!-- 筛选 -->
-      <el-form label-width="80px" size="small">
-        <el-row>
-          <el-col :span="6">
+      <el-row>
+        <el-col :span="18">
+          <el-form label-width="80px" size="small" :inline="true">
             <el-form-item label="学科名称">
               <el-input style="200px" v-model="requestParams.subjectName"></el-input>
             </el-form-item>
-          </el-col>
-          <el-col :span="6" :offset="12">
             <el-form-item style="text-align:right">
               <el-button @click="clear()">清除</el-button>
               <el-button @click="filter()" type="primary">搜索</el-button>
             </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
+          </el-form>
+        </el-col>
+        <el-col :span="6" style="text-align:right">
+          <el-button icon="el-icon-edit" @click="openDialog()" type="success" size="small">新增学科</el-button>
+        </el-col>
+      </el-row>
+
       <!-- 数据记录 -->
       <el-alert
         :title="`数据一共 ${total} 条`"
@@ -153,7 +151,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.fs{
+.fs {
   font-size: 12px;
 }
 </style>

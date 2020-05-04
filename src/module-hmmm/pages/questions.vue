@@ -348,5 +348,6 @@ export default {
 }
 .btn_wrapper {
   margin-bottom: 15px;
+  text-align: right;
 }
 </style>

@@ -416,6 +416,7 @@ export default {
 }
 .btn_wrapper {
   margin-bottom: 15px;
+  text-align: right;
 }
 .fs{
   font-size: 12px;
