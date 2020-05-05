@@ -15,7 +15,8 @@
       <div v-if="myData.questionType!=='3'">
         <div style="padding-bottom:5px">{{myData.questionType|tx}} 选项：（以下选中的选项为正确答案）</div>
         <div v-for="item in myData.options" :key="item.code" style="padding:8px 0">
-          <el-radio :value="item.isRight" :label="1">{{item.title}}</el-radio>
+          <el-radio v-if="myData.questionType==='1'" :value="item.isRight" :label="1">{{item.title}}</el-radio>
+          <el-checkbox v-if="myData.questionType==='2'" :value="item.isRight?true:false" >{{item.title}}</el-checkbox>
         </div>
       </div>
       <hr>
