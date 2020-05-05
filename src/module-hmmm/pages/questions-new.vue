@@ -4,7 +4,7 @@
       <el-form ref="form" :model="qsForm" :rules="qsRules" label-width="120px">
         <!-- 学科 选择器-->
         <el-form-item label="学科：" prop="subjectID">
-          <el-select v-model="qsForm.subjectID" style="width:400px">
+          <el-select @change="changeSubject" v-model="qsForm.subjectID" style="width:400px">
             <el-option v-for="item in subjectOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
@@ -87,7 +87,21 @@
         </el-form-item>
         <!-- 试题标签 输入框-->
         <el-form-item label="试题标签：">
-          <el-input v-model="qsForm.tags" style="width:400px"></el-input>
+            <el-select
+              style="width:400px"
+              v-model="qsForm.tags"
+              multiple
+              filterable
+              allow-create
+              default-first-option
+              placeholder="请选择试题标签">
+              <el-option
+                v-for="item in tagsOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.label">
+              </el-option>
+            </el-select>
         </el-form-item>
         <!-- 提交按钮-->
         <el-form-item>
@@ -102,6 +116,7 @@
 <script>
 import { simple as getSubjectOptions } from '@/api/hmmm/subjects'
 import { simple as getCatalogOptions } from '@/api/hmmm/directorys'
+import { simple as getTagOptions } from '@/api/hmmm/tags'
 import { list as getCompanyOptions } from '@/api/hmmm/companys'
 import { provinces as getCityOptions, citys as getAreaOptions } from '@/api/hmmm/citys'
 import { direction, questionType, difficulty } from '@/api/hmmm/constants'
@@ -193,12 +208,7 @@ export default {
           { required: true, message: '请选择难度', trigger: 'change' }
         ],
         question: [
-          // quill不是element-ui的组件，失去焦点后监听不到，无法触发校验行为。
-          // 自己去监听  富文本 失去焦点事件  自己去调用校验逻辑。
           { required: true, message: '请输入题干', trigger: 'blur' }
-        ],
-        options: [
-          { required: true, message: '请输入选项', trigger: 'blur' }
         ]
       },
       // 学科选项
@@ -216,20 +226,32 @@ export default {
       // 题型
       questionType,
       // 难度
-      difficulty
+      difficulty,
+      // 标签选项
+      tagsOptions: []
     }
   },
   created () {
     this.getSubjectOptions()
-    this.getCatalogOptions()
     this.getCompanyOptions()
   },
   methods: {
+    // 改变学科
+    async changeSubject (subjectID) {
+      this.qsForm.catalogID = null
+      const res = await getCatalogOptions({ subjectID: this.qsForm.subjectID })
+      this.catalogOptions = res.data
+      this.qsForm.tags = null
+      const res2 = await getTagOptions({ subjectID: this.qsForm.subjectID })
+      this.tagsOptions = res2.data
+    },
     // 提交
     submit () {
       this.$refs.form.validate(async valid => {
         if (valid) {
-          await add(this.qsForm)
+          const data = { ...this.qsForm }
+          data.tags = data.tags.join(',')
+          await add(data)
           this.$message.success('添加成功')
           this.$router.push('/questions/list')
         }
@@ -280,10 +302,6 @@ export default {
     async getSubjectOptions () {
       const res = await getSubjectOptions()
       this.subjectOptions = res.data
-    },
-    async getCatalogOptions () {
-      const res = await getCatalogOptions()
-      this.catalogOptions = res.data
     },
     async getCompanyOptions () {
       const res = await getCompanyOptions({ pagesize: 10000 })

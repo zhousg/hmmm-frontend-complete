@@ -79,7 +79,7 @@ export default {
       requestParams: {
         subjectName: '',
         page: 1,
-        pagesize: 5
+        pagesize: 10
       },
       subjects: [],
       total: 0,
