@@ -1,6 +1,6 @@
 <template>
   <div class="questions-preview">
-    <el-dialog title="题目预览" :visible.sync="show" width="900px">
+    <el-dialog title="题目预览" :visible.sync="show" width="900px" @close="close()">
       <el-row>
         <el-col :span="6">【题型】：{{myData.questionType|tx}}</el-col>
         <el-col :span="6">【编号】：{{myData.id}}</el-col>
@@ -19,7 +19,10 @@
         </div>
       </div>
       <hr>
-      【参考答案】：<el-button type="danger" size="small">视频答案预览</el-button>
+      【参考答案】：<el-button type="danger" size="small" @click="preivewVideo()">视频答案预览</el-button>
+      <div class="video" v-show="play">
+        <video ref="video" :src="myData.videoURL" controls></video>
+      </div>
       <hr>
       【答案解析】：<div style="display:inline-block" v-html="myData.answer"></div>
       <hr>
@@ -53,7 +56,8 @@ export default {
   data () {
     return {
       show: false,
-      myData: {}
+      myData: {},
+      play: false
     }
   },
   methods: {
@@ -61,6 +65,14 @@ export default {
       this.show = true
       const res = await detail({ id: this.data.id })
       this.myData = res.data
+    },
+    preivewVideo () {
+      this.play = true
+      this.$refs.video.play()
+    },
+    close () {
+      this.play = false
+      this.$refs.video.pause()
     }
   }
 }
@@ -70,6 +82,14 @@ export default {
 .questions-preview{
   .el-col{
     padding: 10px 0;
+  }
+}
+.video{
+  width: 400px;
+  height: 300px;
+  video {
+    width: 100%;
+    height: 100%;
   }
 }
 </style>

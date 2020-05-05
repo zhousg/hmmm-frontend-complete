@@ -105,7 +105,7 @@ export default [
       {
         path: 'new',
         component: _import('hmmm/pages/articles'),
-        name: 'articles-new',
+        name: 'articles-add',
         meta: { title: '新增技巧', noCache: true, icon: 'component' }
       }
     ]
