@@ -101,12 +101,6 @@ export default [
         component: _import('hmmm/pages/articles'),
         name: 'articles-list',
         meta: { title: '面试技巧', noCache: true, icon: 'component' }
-      },
-      {
-        path: 'new',
-        component: _import('hmmm/pages/articles'),
-        name: 'articles-add',
-        meta: { title: '新增技巧', noCache: true, icon: 'component' }
       }
     ]
   }
