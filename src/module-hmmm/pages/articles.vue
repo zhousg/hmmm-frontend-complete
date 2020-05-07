@@ -38,7 +38,8 @@
         <el-table-column label="序号" type="index" width="80px"></el-table-column>
         <el-table-column label="文章标题" width="400px">
           <template slot-scope="scope">
-            {{scope.row.title}} <a v-if="scope.row.videoURL" href="#" class="el-icon-film"></a>
+            {{scope.row.title}}
+            <a @click.prevent="openVideo(scope.row.videoURL)" v-if="scope.row.videoURL" href="#" class="el-icon-film"></a>
           </template>
         </el-table-column>
         <el-table-column label="阅读数" prop="visits"></el-table-column>
@@ -54,7 +55,7 @@
             <el-button type="text" @click="previewArticle(scope.row)">预览</el-button>
             <el-button type="text" @click="toggleState(scope.row)">{{scope.row.state===1?'禁用':'启用'}}</el-button>
             <el-button type="text" @click="openDialog(scope.row)" :disabled="scope.row.state===1">修改</el-button>
-            <el-button type="text" @click="delTag(scope.row)" :disabled="scope.row.state===1||scope.row.totals > 0">删除</el-button>
+            <el-button type="text" @click="delArticle(scope.row)" :disabled="scope.row.state===1||scope.row.totals > 0">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -74,7 +75,15 @@
     </el-card>
     <!-- 添加|修改 -->
     <articles-add ref="articlesAdd" :data="currArticle" @updateList="updateList()"></articles-add>
+    <!-- 预览 -->
     <articles-preview ref="articlesPreview" :data="currArticle"></articles-preview>
+    <!-- 视频 -->
+    <div class="video-preview" v-if="videoURL">
+      <div class="close" @click="closeVideo()"><span class="el-icon-close"></span></div>
+      <div class="box">
+        <video ref="video" :src="videoURL"></video>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -95,19 +104,33 @@ export default {
       },
       total: 0,
       articles: [],
-      currArticle: {}
+      currArticle: {},
+      videoURL: null
     }
   },
   created () {
     this.getList()
   },
   methods: {
+    // 视频
+    openVideo (url) {
+      this.videoURL = url
+      this.$nextTick(() => {
+        this.$refs.video.play()
+      })
+    },
+    closeVideo () {
+      this.$refs.video.pause()
+      this.videoURL = null
+    },
+    // 预览
     previewArticle (article) {
       this.currArticle = article
       this.$nextTick(() => {
         this.$refs.articlesPreview.open()
       })
     },
+    // 添加 编辑
     openDialog (article = {}) {
       this.currArticle = article
       this.$nextTick(() => {
@@ -123,7 +146,8 @@ export default {
       this.$message.success('操作成功')
       article.state = article.state === 1 ? 0 : 1
     },
-    async delTag (article) {
+    // 删除
+    async delArticle (article) {
       await this.$confirm('此操作将永久删除该文章, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -181,6 +205,43 @@ export default {
   .el-icon-film{
     color: blue;
     font-size: 18px;
+  }
+}
+.video-preview{
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,.3);
+  overflow: hidden;
+  z-index: 9999;
+  .close{
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    transform: translate(-50%,0);
+    background: rgba(0,0,0,0.4);
+    box-shadow: 0 0 5px rgba(0,0,0,0.4);
+    border-radius: 50%;
+    text-align: center;
+    line-height: 50px;
+    color: #fff;
+    font-size: 20px;
+  }
+  .box{
+    width: 800px;
+    height: 600px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    video{
+      width: 100%;
+      height: 100%;
+    }
   }
 }
 </style>

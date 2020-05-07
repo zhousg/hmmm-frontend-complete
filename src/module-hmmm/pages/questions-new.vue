@@ -1,6 +1,7 @@
 <template>
   <div class="app-container question-new">
     <el-card>
+      <div slot="header">{{$route.query.id?'试题修改':'试题录入'}}</div>
       <el-form ref="form" :model="qsForm" :rules="qsRules" label-width="120px">
         <!-- 学科 选择器-->
         <el-form-item label="学科：" prop="subjectID">
@@ -105,8 +106,8 @@
         </el-form-item>
         <!-- 提交按钮-->
         <el-form-item>
-          <el-button @click="submit()" type="primary">提交</el-button>
-          <el-button>取消</el-button>
+          <el-button v-if="!$route.query.id" @click="submit()" type="primary">确认提交</el-button>
+          <el-button v-else @click="update()" type="success">确认修改</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -120,7 +121,7 @@ import { simple as getTagOptions } from '@/api/hmmm/tags'
 import { list as getCompanyOptions } from '@/api/hmmm/companys'
 import { provinces as getCityOptions, citys as getAreaOptions } from '@/api/hmmm/citys'
 import { direction, questionType, difficulty } from '@/api/hmmm/constants'
-import { add } from '@/api/hmmm/questions'
+import { add, detail, update } from '@/api/hmmm/questions'
 
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
@@ -234,8 +235,57 @@ export default {
   created () {
     this.getSubjectOptions()
     this.getCompanyOptions()
+    if (this.$route.query.id) {
+      this.getQuestion()
+    }
+  },
+  watch: {
+    '$route.query': function () {
+      if (this.$route.query.id) {
+        this.getQuestion()
+      } else {
+        this.qsForm = {
+          subjectID: null,
+          catalogID: null,
+          enterpriseID: null,
+          province: null,
+          city: null,
+          direction: null,
+          questionType: '1',
+          difficulty: '1',
+          question: null,
+          options: [
+            { isRight: false, code: 'A', title: '', img: '' },
+            { isRight: false, code: 'B', title: '', img: '' },
+            { isRight: false, code: 'C', title: '', img: '' },
+            { isRight: false, code: 'D', title: '', img: '' }
+          ]
+        }
+        this.$nextTick(() => {
+          this.$refs.form.clearValidate()
+        })
+      }
+    }
   },
   methods: {
+    // 获取题目信息
+    async getQuestion () {
+      const { data } = await detail({ id: this.$route.query.id })
+      data.tags = data.tags.split(',')
+      data.options = data.options.map(item => {
+        item.isRight = item.isRight === 1
+        return item
+      })
+      this.qsForm = data
+      const res = await getCatalogOptions({ subjectID: this.qsForm.subjectID })
+      this.catalogOptions = res.data
+      const res2 = await getTagOptions({ subjectID: this.qsForm.subjectID })
+      this.tagsOptions = res2.data
+      // 滚动顶部
+      this.$nextTick(() => {
+        window.scrollTo(0, 0)
+      })
+    },
     // 改变学科
     async changeSubject (subjectID) {
       this.qsForm.catalogID = null
@@ -253,6 +303,17 @@ export default {
           data.tags = data.tags.join(',')
           await add(data)
           this.$message.success('添加成功')
+          this.$router.push('/questions/list')
+        }
+      })
+    },
+    update () {
+      this.$refs.form.validate(async valid => {
+        if (valid) {
+          const data = { ...this.qsForm }
+          data.tags = data.tags.join(',')
+          await update(data)
+          this.$message.success('修改成功')
           this.$router.push('/questions/list')
         }
       })
@@ -320,9 +381,6 @@ export default {
 </script>
 
 <style scoped lang='scss'>
-.el-card{
-  padding-top: 20px;
-}
 // 现在仅在当前组件下生效，让样式的作用更深
 .question-new ::v-deep .ql-editor{
   height: 200px;
